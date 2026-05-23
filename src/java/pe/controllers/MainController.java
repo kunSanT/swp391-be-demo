@@ -1,0 +1,126 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pe.controllers;
+
+import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ *
+ * @author Computing Fundamental - HCM Campus
+ */
+public class MainController extends HttpServlet {
+
+//    private static final String WELCOME="login.jsp";
+    private static final String WELCOME = "login.html";
+    private static final String LOGIN_CONTROLLER = "LoginServlet";
+    private static final String SEARCH_LASTNAME_CONTROLLER = "SearchLastNameServlet";
+    private static final String DELETE_PK_CONTROLLER = "DeletePkServlet";
+    private static final String CREATE_ACCOUNT_CONTROLLER = "CreateAccountServlet";
+    private static final String STARTUP_CONTROLLER = "StartUpServlet";
+    private static final String UPDATE_CONTROLLER = "UpdateServlet";
+    private static final String SIGNOUT_CONTROLLER = "SignOutServlet";
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        String url = WELCOME;
+        String action = request.getParameter("action");
+        try {
+            if (action == null) { // first request
+                //check cookies
+                url = STARTUP_CONTROLLER;
+            } else if (action.equals("Login")) {// user click login buton
+                url = LOGIN_CONTROLLER;
+            }else if(action.equals("Create New Account")){
+                url = CREATE_ACCOUNT_CONTROLLER;
+            } else {//Tru chuc nang login ra thi cac chuc nang khac phai dung switch case
+                //Check session co ton tai
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+
+                    switch (action) {
+                        case "Search":
+                            url = SEARCH_LASTNAME_CONTROLLER;
+                            break;
+                        case "delete":
+                            url = DELETE_PK_CONTROLLER;
+                            break;
+//                        case "Create New Account":
+//                            url = CREATE_ACCOUNT_CONTROLLER;
+//                            break;
+                        case "update":
+                            url = UPDATE_CONTROLLER;
+                            break;
+                        case "SignOut":
+                            url = SIGNOUT_CONTROLLER;
+                            break;
+                    }
+                }//session has existed
+            }//other feature
+        } catch (Exception e) {
+            log("error at MainController: " + e.toString());
+        } finally {
+//            request.getRequestDispatcher(url).forward(request, response);
+            RequestDispatcher rd = request.getRequestDispatcher(url);
+            rd.forward(request, response);
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
